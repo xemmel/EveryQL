@@ -31,12 +31,15 @@ namespace KaggleReader.Tests.Tests.Queries
         [InlineData("{ entries(winner : \"Germany\") { year } }")]
         [InlineData("{ entries(winner : \"Germany\") { year contest(top: 3) { song country } } }")]
         [InlineData("{ entries(host : \"Germany\") { year contest(top: 3) { song country } } }")]
+        [InlineData("{ contests { year }  }")]
+        [InlineData("{ contests { year winner { country } }  }")]
 
 
 
 
 
-        [InlineData("{ contest(year: 1980) { year } }")]
+
+        [InlineData("{ contest(year: 1980) { year entries(top: 4) { country song } } }")]
 
         public async Task QueryGraphQL(string query)
         {

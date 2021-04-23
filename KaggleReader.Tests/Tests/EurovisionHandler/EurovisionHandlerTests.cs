@@ -22,5 +22,38 @@ namespace KaggleReader.Tests.Tests.EurovisionHandler
             Assert.NotNull(lyrics);
             Assert.True(lyrics.Any());
         }
+
+        [Theory]
+        [InlineData(1970,"Ireland")]
+        [InlineData(2010,"Germany")]
+        public async Task GetContestEntriesAsync(int year, string expectedWinningCountry)
+        {
+            var entries = await _eurovisionHandler
+                                    .GetContestEntriesAsync(
+                                            year: year,
+                                            top: null);
+            Assert.NotNull(entries);
+            Assert.Equal(expectedWinningCountry, entries.First().Country);
+        }
+
+        [Fact]
+        public async Task GetContestsAsync()
+        {
+            var contests = await _eurovisionHandler
+                                    .GetContestsAsync();
+            Assert.NotNull(contests);
+            Assert.True(contests.Any());
+        }
+        [Theory]
+        [InlineData(2000,"Denmark")]
+        public async Task GetContestAsync(int year, string expectedWinnerCountry)
+        {
+            var contest = await _eurovisionHandler
+                                    .GetContestAsync(year: year);
+            Assert.NotNull(contest);
+            Assert.Equal(expectedWinnerCountry, contest.Winner.Country);
+        }
+
+
     }
 }

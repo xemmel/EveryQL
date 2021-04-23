@@ -7,9 +7,11 @@ namespace KaggleReader.Library.Models.Eurovision
         [JsonPropertyName("#")]
         public string Id { get; set; }
         public string Country { get; set; }
-        [JsonPropertyName("#.l")]
-        public string EntryNumberCountry { get; set; }
+        [JsonPropertyName("#.1")]
+        public string CountryEntryNumber { get; set; }
 
+        [JsonIgnore]
+        public int EntryNumber { get; set; }
         public string Artist { get; set; }
         public string Song { get; set; }
         public string Language { get; set; }

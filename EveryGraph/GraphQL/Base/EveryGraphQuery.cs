@@ -12,7 +12,7 @@ namespace EveryGraph.GraphQL.Base
     {
         public EveryGraphQuery(IEurovisionHandler eurovisionHandler)
         {
-            Field<StringGraphType>("version", resolve: _ => $"0.1.0");
+            Field<StringGraphType>("version", resolve: _ => $"0.2.0");
 
 
 
@@ -54,13 +54,28 @@ namespace EveryGraph.GraphQL.Base
             #endregion
 
             #region Contest
-            Field<ListGraphType<EurovisionLyricGraphType>>(
+            Field<EuroVisionContestGraphType>(
                 "contest",
                 arguments: new QueryArguments { new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "year" } },
-                resolve:  context => {
+                resolve: context =>
+                {
                     var year = context.GetArgument<int>("year");
-                    return eurovisionHandler.GetContestEntriesAsync(year: year);
+                    return eurovisionHandler
+                                .GetContestAsync(
+                                        year: year,
+                                        cancellationToken: context.CancellationToken);
                 });
+            #endregion
+
+
+            #region Contests
+            Field<ListGraphType<EuroVisionContestGraphType>>(
+                    "contests",
+                    arguments: (new QueryArguments()),
+                    resolve: context => {
+                        return eurovisionHandler
+                                    .GetContestsAsync(cancellationToken: context.CancellationToken);
+                    });
             #endregion
         }
     }

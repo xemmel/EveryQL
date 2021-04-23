@@ -5,9 +5,10 @@ namespace EveryGraph.GraphQL.Types
 {
     public class EurovisionLyricGraphType : AutoRegisteringObjectGraphType<EuroVisionLyricModel>
     {
-        public EurovisionLyricGraphType()
+        public EurovisionLyricGraphType() : base(f => f.ScoreString, f => f.PlacementString)
         {
-           // Field(f => f.Artist);
+
         }
+
     }
 }

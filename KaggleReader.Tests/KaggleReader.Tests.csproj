@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KaggleReader.Library\KaggleReader.Library.csproj" />
+    <ProjectReference Include="..\EveryGraph\EveryGraph.csproj" />
   </ItemGroup>
 
   <ItemGroup>

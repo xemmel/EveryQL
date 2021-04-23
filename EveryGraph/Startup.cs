@@ -1,3 +1,4 @@
+using EveryGraph.DI;
 using EveryGraph.GraphQL.Base;
 using GraphQL.Server;
 using KaggleReader.Library.DI;
@@ -21,11 +22,8 @@ namespace EveryGraph
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddKaggleReader();
-            services.AddSingleton<EveryGraphSchema>()
-                    .AddGraphQL()
-                    .AddSystemTextJson()
-                    .AddGraphTypes(serviceLifetime: ServiceLifetime.Singleton);
+            services.AddKaggleReader()
+                    .AddEveryGraph();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

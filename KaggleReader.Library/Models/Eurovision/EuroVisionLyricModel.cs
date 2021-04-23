@@ -42,7 +42,11 @@ namespace KaggleReader.Library.Models.Eurovision
         }
         [JsonPropertyName("Eurovision_Number")]
         public int ContestNumber { get; set; }
-        public string Year { get; set; }
+        [JsonPropertyName("Year")]
+        public string YearString { get; set; }
+        [JsonIgnore]
+        public int Year => int.Parse(YearString);
+
         [JsonPropertyName("Host_Country")]
         public string HostCountry { get; set; }
         [JsonPropertyName("Host_City")]

@@ -12,19 +12,41 @@ namespace EveryGraph.GraphQL.Base
     {
         public EveryGraphQuery(IEurovisionHandler eurovisionHandler)
         {
-            Field<StringGraphType>("version", resolve: _ => $"0.0.1");
+            Field<StringGraphType>("version", resolve: _ => $"0.1.0");
 
 
 
             #region entries
             FieldAsync<ListGraphType<EurovisionLyricGraphType>>(
                     "entries",
-                    arguments: (new QueryArguments()).AddFiltersArgument(),
+                    arguments: (new QueryArguments())
+                                    .AddFiltersArgument()
+                                    .AddCountryArgument()
+                                    .AddWinnerArgument()
+                                    .AddHostArgument(),
                     resolve: async context => {
                         var entries = await  eurovisionHandler
                                     .GetLyricsAsync(
                                             cancellationToken: context.CancellationToken);
-                        string filters = context.GetArgument<string>("filters");
+                        string? filters = context.GetArgument<string>("filters");
+                        string? country = context.GetArgument<string>("country");
+                        string? winner = context.GetArgument<string>("winner");
+                        string? host = context.GetArgument<string>("host");
+
+                        if (!string.IsNullOrWhiteSpace(host))
+                            return entries
+                                        .Where(e => (e.HostCountry.WildEquals(host) && (e.Placement == 1)))
+                                        .OrderBy(e => e.Year);
+
+                        if (!string.IsNullOrWhiteSpace(winner))
+                            return entries
+                                        .Where(e => (e.Country.WildEquals(winner) && (e.Placement == 1)))
+                                        .OrderBy(e => e.Year);
+
+                        if (!string.IsNullOrWhiteSpace(country))
+                            return entries
+                                        .Where(e => e.Country.WildEquals(country))
+                                        .OrderBy(e => e.Year);
                         if (string.IsNullOrWhiteSpace(filters))
                             return entries;
                         return entries.Where(e => e.AnyPropertyCombiContains(filters));
@@ -32,15 +54,12 @@ namespace EveryGraph.GraphQL.Base
             #endregion
 
             #region Contest
-            FieldAsync<ListGraphType<EurovisionLyricGraphType>>(
+            Field<ListGraphType<EurovisionLyricGraphType>>(
                 "contest",
-                arguments: new QueryArguments { new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "year" } },
-                resolve: async context => {
-                    var entries = await eurovisionHandler
-                                            .GetLyricsAsync(cancellationToken: context.CancellationToken);
-                    var year = context.GetArgument<string>("year");
-                    var result = entries.Where(e => (e.Year.Equals(year) && (e.Score != null))).OrderBy(e => e.Placement);
-                    return result;
+                arguments: new QueryArguments { new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "year" } },
+                resolve:  context => {
+                    var year = context.GetArgument<int>("year");
+                    return eurovisionHandler.GetContestEntriesAsync(year: year);
                 });
             #endregion
         }

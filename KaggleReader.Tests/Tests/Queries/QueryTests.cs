@@ -27,8 +27,16 @@ namespace KaggleReader.Tests.Tests.Queries
         [InlineData("{ version }")]
         [InlineData("{ entries { year } }")]
         [InlineData("{ entries(filters : \"logan\") { year } }")]
+        [InlineData("{ entries(country : \"Germany\") { year } }")]
+        [InlineData("{ entries(winner : \"Germany\") { year } }")]
+        [InlineData("{ entries(winner : \"Germany\") { year contest(top: 3) { song country } } }")]
+        [InlineData("{ entries(host : \"Germany\") { year contest(top: 3) { song country } } }")]
 
-        [InlineData("{ contest(year: \"1980\") { year } }")]
+
+
+
+
+        [InlineData("{ contest(year: 1980) { year } }")]
 
         public async Task QueryGraphQL(string query)
         {

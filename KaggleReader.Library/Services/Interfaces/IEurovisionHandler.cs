@@ -7,6 +7,7 @@ namespace KaggleReader.Library.Services
 {
     public interface IEurovisionHandler
     {
+        Task<IEnumerable<EuroVisionLyricModel>> GetContestEntriesAsync(int year, int? top = null, CancellationToken cancellationToken = default);
         Task<IEnumerable<EuroVisionLyricModel>> GetLyricsAsync(CancellationToken cancellationToken = default);
     }
 }

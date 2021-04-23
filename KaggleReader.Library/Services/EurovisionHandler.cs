@@ -1,6 +1,7 @@
 ﻿using KaggleReader.Library.Models.Eurovision;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,16 @@ namespace KaggleReader.Library.Services
                 _cache = await _jsonHandler.DeserializeKaggleJsonAsync<EuroVisionLyricModel>(jsonStream: stream, cancellationToken: cancellationToken);
             }
             return _cache;
+        }
+
+        public async Task<IEnumerable<EuroVisionLyricModel>> GetContestEntriesAsync(int year, int? top = null, CancellationToken cancellationToken = default)
+        {
+            var entries = await GetLyricsAsync(cancellationToken: cancellationToken);
+            
+            var result = entries.Where(e => ((e.Year == year) && (e.Placement != null))).OrderBy(e => e.Placement);
+            if (top == null)
+                return result;
+            return result.Take(top.Value);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using KaggleReader.Library.Models.Eurovision;
+﻿using KaggleReader.Library.Extensions;
+using KaggleReader.Library.Models.Eurovision;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,11 +14,13 @@ namespace KaggleReader.Library.Services
         private readonly IJsonHandler _jsonHandler;
         private IEnumerable<EuroVisionLyricModel> _entries = null;
         private IEnumerable<EuroVisionContestModel> _contests = null;
+        private EntrySortEnum DEFAULT_ENTRY_SORT = EntrySortEnum.Entry;
 
         public EurovisionHandler(IJsonHandler jsonHandler)
         {
             _jsonHandler = jsonHandler;
         }
+
 
         public async Task<IEnumerable<EuroVisionLyricModel>> GetLyricsAsync(CancellationToken cancellationToken = default)
         {
@@ -32,17 +35,21 @@ namespace KaggleReader.Library.Services
             return _entries;
         }
 
-        public async Task<IEnumerable<EuroVisionLyricModel>> GetContestEntriesAsync(int year, int? top = null, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<EuroVisionLyricModel>> GetContestEntriesAsync(int year, int? top = null, EntrySortEnum? entrySortEnum = null, CancellationToken cancellationToken = default)
         {
             var entries = await GetLyricsAsync(cancellationToken: cancellationToken);
+            entrySortEnum ??= DEFAULT_ENTRY_SORT;
+            var result = entries
+                        .Where(e => ((e.Year == year) && (e.Placement != null)));
+            
+            result = result.ReOrder(entrySortEnum: entrySortEnum.Value);
 
-            var result = entries.Where(e => ((e.Year == year) && (e.Placement != null))).OrderBy(e => e.Placement);
             if (top == null)
                 return result;
             return result.Take(top.Value);
         }
 
-        public async Task<IEnumerable<EuroVisionContestModel>> GetContestsAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<EuroVisionContestModel>> GetContestsAsync(EntrySortEnum? entrySortEnum = null, int? top = null, CancellationToken cancellationToken = default)
         {
             if (_contests == null)
             {
@@ -51,24 +58,27 @@ namespace KaggleReader.Library.Services
                 List<EuroVisionContestModel> result = new List<EuroVisionContestModel>();
                 foreach (int year in years)
                 {
-                    var yearEntries = entries
-                                        .Where(e => e.Year == year)
-                                        .OrderBy(e => e.Id)
-                                        .ToArray();
+                    var yearEntries = await GetContestEntriesAsync(
+                                                year: year, 
+                                                top: top, 
+                                                entrySortEnum: entrySortEnum, 
+                                                cancellationToken: cancellationToken);
                     int index = 1;
                     foreach (var yearEntry in yearEntries)
                         yearEntry.EntryNumber = index++;
-                    var contest = new EuroVisionContestModel { Entries = yearEntries };
+                    var contest = new EuroVisionContestModel { Entries = yearEntries.ToArray() };
                     result.Add(contest);
                 }
                 _contests = result;
             }
-            return _contests;
+            entrySortEnum ??= DEFAULT_ENTRY_SORT;
+            var orderedResult = _contests.ReOrder(entrySortEnum: entrySortEnum.Value);
+            return orderedResult;
         }
     
-        public async Task<EuroVisionContestModel?> GetContestAsync(int year, CancellationToken cancellationToken = default)
+        public async Task<EuroVisionContestModel?> GetContestAsync(int year, EntrySortEnum? entrySortEnum = null, CancellationToken cancellationToken = default)
         {
-            var contests = await GetContestsAsync(cancellationToken: cancellationToken);
+            var contests = await GetContestsAsync(entrySortEnum: entrySortEnum, cancellationToken: cancellationToken);
             return contests.FirstOrDefault(c => c.Year == year);
         }
     }

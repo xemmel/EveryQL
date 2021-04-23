@@ -39,6 +39,8 @@ namespace KaggleReader.Tests.Tests.Queries
 
 
 
+        [InlineData("{ contest(year: 1980) { year entries(top: 4, order: PLACEMENT) { country song } } }")]
+        [InlineData("{ contest(year: 1980) { year entries(top: 4, order: ENTRY) { country song } } }")]
         [InlineData("{ contest(year: 1980) { year entries(top: 4) { country song } } }")]
 
         public async Task QueryGraphQL(string query)

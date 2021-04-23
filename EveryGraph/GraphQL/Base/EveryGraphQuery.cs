@@ -12,7 +12,7 @@ namespace EveryGraph.GraphQL.Base
     {
         public EveryGraphQuery(IEurovisionHandler eurovisionHandler)
         {
-            Field<StringGraphType>("version", resolve: _ => $"0.2.0");
+            Field<StringGraphType>("version", resolve: _ => $"0.3.0");
 
 
 
@@ -24,8 +24,9 @@ namespace EveryGraph.GraphQL.Base
                                     .AddCountryArgument()
                                     .AddWinnerArgument()
                                     .AddHostArgument(),
-                    resolve: async context => {
-                        var entries = await  eurovisionHandler
+                    resolve: async context =>
+                    {
+                        var entries = await eurovisionHandler
                                     .GetLyricsAsync(
                                             cancellationToken: context.CancellationToken);
                         string? filters = context.GetArgument<string>("filters");
@@ -56,13 +57,17 @@ namespace EveryGraph.GraphQL.Base
             #region Contest
             Field<EuroVisionContestGraphType>(
                 "contest",
-                arguments: new QueryArguments { new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "year" } },
+                arguments: (new QueryArguments())
+                                .AddYearArgument(),
+
                 resolve: context =>
                 {
                     var year = context.GetArgument<int>("year");
+
                     return eurovisionHandler
                                 .GetContestAsync(
                                         year: year,
+                                        entrySortEnum: null,
                                         cancellationToken: context.CancellationToken);
                 });
             #endregion
@@ -72,7 +77,8 @@ namespace EveryGraph.GraphQL.Base
             Field<ListGraphType<EuroVisionContestGraphType>>(
                     "contests",
                     arguments: (new QueryArguments()),
-                    resolve: context => {
+                    resolve: context =>
+                    {
                         return eurovisionHandler
                                     .GetContestsAsync(cancellationToken: context.CancellationToken);
                     });

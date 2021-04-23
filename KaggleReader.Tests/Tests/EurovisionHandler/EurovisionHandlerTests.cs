@@ -1,4 +1,5 @@
 ﻿using KaggleReader.Library.DI;
+using KaggleReader.Library.Models.Eurovision;
 using KaggleReader.Library.Services;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,14 +25,28 @@ namespace KaggleReader.Tests.Tests.EurovisionHandler
         }
 
         [Theory]
-        [InlineData(1970,"Ireland")]
-        [InlineData(2010,"Germany")]
-        public async Task GetContestEntriesAsync(int year, string expectedWinningCountry)
+        [InlineData(1970,"Netherlands")]
+        [InlineData(2010,"Moldova")]
+        public async Task GetContestEntriesAsync_ByEntry(int year, string expectedFirstCountry)
         {
             var entries = await _eurovisionHandler
                                     .GetContestEntriesAsync(
                                             year: year,
                                             top: null);
+            Assert.NotNull(entries);
+            Assert.Equal(expectedFirstCountry, entries.First().Country);
+        }
+
+        [Theory]
+        [InlineData(1970, "Ireland")]
+        [InlineData(2010, "Germany")]
+        public async Task GetContestEntriesAsync_ByPlacement(int year, string expectedWinningCountry)
+        {
+            var entries = await _eurovisionHandler
+                                    .GetContestEntriesAsync(
+                                            year: year,
+                                            top: null,
+                                            entrySortEnum: EntrySortEnum.Placement);
             Assert.NotNull(entries);
             Assert.Equal(expectedWinningCountry, entries.First().Country);
         }

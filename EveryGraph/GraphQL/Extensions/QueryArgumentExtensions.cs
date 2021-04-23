@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using EveryGraph.GraphQL.Types.Enums;
+using GraphQL.Types;
 
 namespace EveryGraph.GraphQL.Extensions
 {
@@ -12,6 +13,12 @@ namespace EveryGraph.GraphQL.Extensions
         public static QueryArguments AddCountryArgument(this QueryArguments queryArguments)
         {
             queryArguments.Add(new QueryArgument<StringGraphType> { Name = "country", Description = "Entry Country" });
+            return queryArguments;
+        }
+
+        public static QueryArguments AddYearArgument(this QueryArguments queryArguments)
+        {
+            queryArguments.Add(new QueryArgument<BigIntGraphType> { Name = "year", Description = "Entry Year" });
             return queryArguments;
         }
 
@@ -30,6 +37,12 @@ namespace EveryGraph.GraphQL.Extensions
         public static QueryArguments AddTopArgument(this QueryArguments queryArguments)
         {
             queryArguments.Add(new QueryArgument<IntGraphType> { Name = "top", Description = "Specify the result count max" });
+            return queryArguments;
+        }
+
+        public static QueryArguments AddEntrySortArgument(this QueryArguments queryArguments)
+        {
+            queryArguments.Add(new QueryArgument<EntrySortEnumGraphType> { Name = "order", Description = "Order Entries" });
             return queryArguments;
         }
     }

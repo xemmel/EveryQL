@@ -11,11 +11,17 @@ namespace EveryGraph.GraphQL.Types
         {
             Field<EurovisionLyricGraphType>("winner", resolve: f => f.Source.Winner);
             Field<ListGraphType<EurovisionLyricGraphType>>(
-                    "entries", arguments: (new QueryArguments()).AddTopArgument(),
+                    "entries", arguments: (new QueryArguments())
+                                                .AddTopArgument()
+                                                .AddEntrySortArgument(),
                     resolve: context =>
                     {
                         int? top = context.ResolveArgumentTop();
-                        return context.Source.Entries.TakePositive(top);
+                        var order = context.ResolveEntrySort();
+                        return context.Source
+                                        .Entries
+                                        .ReOrder(order)
+                                        .TakePositive(top);
                     });
 
         }

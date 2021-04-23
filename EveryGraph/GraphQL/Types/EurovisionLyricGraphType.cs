@@ -8,25 +8,25 @@ namespace EveryGraph.GraphQL.Types
 {
     public class EurovisionLyricGraphType : AutoRegisteringObjectGraphType<EuroVisionLyricModel>
     {
-        public EurovisionLyricGraphType(IEurovisionHandler eurovisionHandler) 
+        public EurovisionLyricGraphType(IEurovisionHandler eurovisionHandler)
                     : base(
-                                f => f.ScoreString, 
-                                f => f.PlacementString, 
+                                f => f.ScoreString,
+                                f => f.PlacementString,
                                 f => f.YearString)
         {
 
-            Field<ListGraphType<EurovisionLyricGraphType>>(
-                    "contest", 
-                    arguments: (new QueryArguments()).AddTopArgument(),
-                    resolve:  context => {
-                var year = context.Source.Year;
-                        int? top = context.GetArgument<int>("top");
-                return eurovisionHandler
-                            .GetContestEntriesAsync(
-                                year: year, 
-                                top: top,
-                                cancellationToken: context.CancellationToken);
-            });
+            Field<EuroVisionContestGraphType>(
+                    "contest",
+                    arguments: (new QueryArguments()),
+                    resolve:  context =>
+                    {
+                        var year = context.Source.Year;
+                        return eurovisionHandler
+                                    .GetContestAsync(
+                                        year: year,
+                                        entrySortEnum: null,
+                                        cancellationToken: context.CancellationToken);
+                    });
         }
 
     }

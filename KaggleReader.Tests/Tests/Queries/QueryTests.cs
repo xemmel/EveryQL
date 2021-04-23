@@ -29,10 +29,17 @@ namespace KaggleReader.Tests.Tests.Queries
         [InlineData("{ entries(filters : \"logan\") { year } }")]
         [InlineData("{ entries(country : \"Germany\") { year } }")]
         [InlineData("{ entries(winner : \"Germany\") { year } }")]
-        [InlineData("{ entries(winner : \"Germany\") { year contest(top: 3) { song country } } }")]
-        [InlineData("{ entries(host : \"Germany\") { year contest(top: 3) { song country } } }")]
+        [InlineData("{ entries(winner : \"Germany\") { year contest { hostCountry } } }")]
+        [InlineData("{ entries(winner : \"Germany\") { year contest { hostCountry entries { song } } } }")]
+        [InlineData("{ entries(winner : \"Germany\") { year contest { hostCountry entries(order: PLACEMENT) { song } } } }")]
+
+        [InlineData("{ entries(host : \"Germany\") { year contest { hostCountry } } }")]
         [InlineData("{ contests { year }  }")]
         [InlineData("{ contests { year winner { country } }  }")]
+        [InlineData("{ contests { year winner { country  } entries { song } }  }")]
+        [InlineData("{ contests { year winner { country  } entries(order: PLACEMENT) { song } }  }")]
+
+
 
 
 

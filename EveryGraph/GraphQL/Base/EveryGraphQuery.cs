@@ -12,7 +12,7 @@ namespace EveryGraph.GraphQL.Base
     {
         public EveryGraphQuery(IEurovisionHandler eurovisionHandler)
         {
-            Field<StringGraphType>("version", resolve: _ => $"0.3.0");
+            Field<StringGraphType>("version", resolve: _ => $"0.3.1");
 
 
 

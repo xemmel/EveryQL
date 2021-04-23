@@ -3,11 +3,11 @@ using KaggleReader.Library.Models.Eurovision;
 
 namespace EveryGraph.GraphQL.Types
 {
-    public class EurovisionLyricGraphType : ObjectGraphType<EuroVisionLyricModel>
+    public class EurovisionLyricGraphType : AutoRegisteringObjectGraphType<EuroVisionLyricModel>
     {
         public EurovisionLyricGraphType()
         {
-            Field(f => f.Artist);
+           // Field(f => f.Artist);
         }
     }
 }

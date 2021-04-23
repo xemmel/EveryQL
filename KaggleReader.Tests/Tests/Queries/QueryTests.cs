@@ -25,7 +25,9 @@ namespace KaggleReader.Tests.Tests.Queries
 
         [Theory]
         [InlineData("{ version }")]
-        [InlineData("{ eurovisionSongs { year } }")]
+        [InlineData("{ entries { year } }")]
+        [InlineData("{ entries(filters : \"logan\") { year } }")]
+
         [InlineData("{ contest(year: \"1980\") { year } }")]
 
         public async Task QueryGraphQL(string query)

@@ -11,6 +11,12 @@ namespace EveryGraph.GraphQL.Extensions
             return result;
         }
 
+        public static string? ResolveArgumentFilters(this IResolveFieldContext context)
+        {
+            string? result = context.GetArgument<string>("filters");
+            return result;
+        }
+
         public static EntrySortEnum ResolveEntrySort(this IResolveFieldContext context)
         {
             var result = context.GetArgument<EntrySortEnum>("order");

@@ -40,7 +40,7 @@ namespace KaggleReader.Library.Services
             var entries = await GetLyricsAsync(cancellationToken: cancellationToken);
             entrySortEnum ??= DEFAULT_ENTRY_SORT;
             var result = entries
-                        .Where(e => ((e.Year == year) && (e.Placement != null)));
+                        .Where(e => ((e.Year == year) && ((e.Placement != null) || (e.Year == 1956))));
             
             result = result.ReOrder(entrySortEnum: entrySortEnum.Value);
 

@@ -10,7 +10,9 @@ namespace KaggleReader.Library.DI
         {
             services
                     .AddSingleton<IJsonHandler, JsonHandler>()
-                    .AddSingleton<IEurovisionHandler, EurovisionHandler>();
+                    .AddSingleton<IEurovisionHandler, EurovisionHandler>()
+                    .AddSingleton<ICountryHandler, CountryHandler>()
+                    .AddHttpClient();
             action?.Invoke(services);
             return services;
         }

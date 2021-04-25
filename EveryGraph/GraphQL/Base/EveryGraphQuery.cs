@@ -10,11 +10,24 @@ namespace EveryGraph.GraphQL.Base
 {
     public class EveryGraphQuery : ObjectGraphType
     {
-        public EveryGraphQuery(IEurovisionHandler eurovisionHandler)
+        public EveryGraphQuery(IEurovisionHandler eurovisionHandler, ICountryHandler countryHandler)
         {
             Field<StringGraphType>("version", resolve: _ => $"0.3.1");
 
+            #region countries
+            FieldAsync<ListGraphType<CountryGraphType>>(
+                    "countries",
+                    arguments: (new QueryArguments()).AddFiltersArgument(),
+                    resolve: async context => {
 
+                        var filters = context.ResolveArgumentFilters();
+                        var countries = await countryHandler.GetCountriesAsync(cancellationToken: context.CancellationToken);
+                        if (!string.IsNullOrWhiteSpace(filters))
+                            countries = countries.Where(e => e.AnyPropertyCombiContains(filters));
+                        return countries;
+
+                    });
+            #endregion
 
             #region entries
             FieldAsync<ListGraphType<EurovisionLyricGraphType>>(
@@ -29,7 +42,7 @@ namespace EveryGraph.GraphQL.Base
                         var entries = await eurovisionHandler
                                     .GetLyricsAsync(
                                             cancellationToken: context.CancellationToken);
-                        string? filters = context.GetArgument<string>("filters");
+                        string? filters = context.ResolveArgumentFilters();
                         string? country = context.GetArgument<string>("country");
                         string? winner = context.GetArgument<string>("winner");
                         string? host = context.GetArgument<string>("host");

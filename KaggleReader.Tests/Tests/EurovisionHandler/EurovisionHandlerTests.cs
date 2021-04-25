@@ -61,6 +61,8 @@ namespace KaggleReader.Tests.Tests.EurovisionHandler
         }
         [Theory]
         [InlineData(2000,"Denmark")]
+        [InlineData(1956, "Switzerland")]
+
         public async Task GetContestAsync(int year, string expectedWinnerCountry)
         {
             var contest = await _eurovisionHandler
